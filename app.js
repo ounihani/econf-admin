@@ -24,7 +24,7 @@ const app = express()
 // Cars collection
 const Cars = mongoose.model('Car', {
   name: String,
-  color: { type: String, enum: ['black'], required: true }, // Henry Ford
+  color: { type: String, enum: ['black','white'], required: true }, // Henry Ford
   ownerId: {
     type: mongoose.Types.ObjectId,
     ref: 'User',
@@ -68,7 +68,6 @@ const adminBro = new AdminBro({
           ownerId: { isVisible: { edit: false, show: true, list: true, filter: true } }
         },
         actions: {
-          // list: { isAccessible: canEditCars },
           edit: { isAccessible: canEditCars },
           delete: { isAccessible: canEditCars },
           new: {
@@ -122,7 +121,27 @@ const adminBro = new AdminBro({
           ownerId: { isVisible: { edit: false, show: true, list: true, filter: true } }
         },
         actions: {
-          list: { isAccessible: canListConferences },
+          list: {
+            before: async (request, context) => {
+              const { currentAdmin } = context
+              if(currentAdmin.role == 'admin'){
+                return {
+                  ...request,
+                  query: {
+                     ...request.query
+                  }
+                }
+              } else {
+                return {
+                  ...request,
+                  query: {
+                     ...request.query,
+                     'filters.confadmin':  currentAdmin._id
+                  }
+                }
+              }
+            },
+          },
           new: {
             before: async (request, { currentAdmin }) => {
               request.payload = {
