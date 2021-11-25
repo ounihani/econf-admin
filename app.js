@@ -14,16 +14,8 @@ AdminBro.registerAdapter(require('@admin-bro/mongoose'))
 // express server definition
 const app = express()
 
-// Resources definitions
-// const User = mongoose.model('User', {
-//   email: { type: String, required: true },
-//   encryptedPassword: { type: String, required: true },
-//   role: { type: String, enum: ['admin', 'restricted'], required: true },
-// })
 
-
-
-// RBAC functions
+// RBAC functions ( Role Based Access control )
 
 const canModifyUsers = ({ currentAdmin }) => {
   return currentAdmin && currentAdmin.role === 'admin'
@@ -32,14 +24,12 @@ const canModifyUsers = ({ currentAdmin }) => {
 const canListUsers = ({ currentAdmin }) => {
   return currentAdmin && currentAdmin.role === 'admin'
 }
-const canListConferences = ({ currentAdmin }) => {
-  return currentAdmin && currentAdmin.role === 'admin'
-}
+
 const canListPrograms = ({ currentAdmin }) => {
   return currentAdmin && currentAdmin.role === 'admin'
 }
 
-
+//changin admin bro text
 const locale = {
   translations: {
     labels: {
@@ -91,6 +81,7 @@ const adminBro = new AdminBro({
       resource: Conferences,
       options: {
         properties: {
+          _id: { isVisible: { edit: false, show: false, list: true, filter: false } },
           ownerId: { isVisible: { edit: false, show: true, list: true, filter: true } }
         },
         actions: {
@@ -157,7 +148,7 @@ const adminBro = new AdminBro({
   },
 })
 
-// Build and use a router which will handle all AdminBro routes
+// Build and use a router which will handle all AdminBro routes and adding athentication
 const router = AdminBroExpressjs.buildAuthenticatedRouter(adminBro, {
   authenticate: async (email, password) => {
     const user = await User.findOne({ email })
