@@ -21,30 +21,10 @@ const app = express()
 //   role: { type: String, enum: ['admin', 'restricted'], required: true },
 // })
 
-// Cars collection
-const Cars = mongoose.model('Car', {
-  name: String,
-  color: { type: String, enum: ['black','white'], required: true }, // Henry Ford
-  ownerId: {
-    type: mongoose.Types.ObjectId,
-    ref: 'User',
-  }
-})
+
 
 // RBAC functions
-const canEditCars = ({ currentAdmin, record }) => {
-  return currentAdmin && (
-    currentAdmin.role === 'admin'
-    || currentAdmin._id == record.param('ownerId')
-  )
-}
-const canListCars = ({ currentAdmin, record }) => {
-  //console.log(record);
-  return currentAdmin && (
-    currentAdmin.role === 'admin'
-    || (typeof record !== "undefined" && currentAdmin._id === record.param('ownerId'))
-  )
-}
+
 const canModifyUsers = ({ currentAdmin }) => {
   return currentAdmin && currentAdmin.role === 'admin'
 }
@@ -61,27 +41,6 @@ const canListPrograms = ({ currentAdmin }) => {
 // Pass all configuration settings to AdminBro
 const adminBro = new AdminBro({
   resources: [
-    {
-      resource: Cars,
-      options: {
-        properties: {
-          ownerId: { isVisible: { edit: false, show: true, list: true, filter: true } }
-        },
-        actions: {
-          edit: { isAccessible: canEditCars },
-          delete: { isAccessible: canEditCars },
-          new: {
-            before: async (request, { currentAdmin }) => {
-              request.payload = {
-                ...request.payload,
-                ownerId: currentAdmin._id,
-              }
-              return request
-            },
-          }
-        }
-      }
-    },
     {
       resource: User,
       options: {
