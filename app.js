@@ -38,6 +38,20 @@ const canListConferences = ({ currentAdmin }) => {
 const canListPrograms = ({ currentAdmin }) => {
   return currentAdmin && currentAdmin.role === 'admin'
 }
+
+
+const locale = {
+  translations: {
+    labels: {
+      // change Heading for Login
+      loginWelcome: '',
+    },
+    messages: {
+      loginWelcome: '',
+    },
+  },
+};
+
 // Pass all configuration settings to AdminBro
 const adminBro = new AdminBro({
   resources: [
@@ -134,7 +148,13 @@ const adminBro = new AdminBro({
       }
     }
   ],
+  locale,
   rootPath: '/admin',
+  branding: {
+    companyName: '',
+    softwareBrothers: false,
+    logo: '',
+  },
 })
 
 // Build and use a router which will handle all AdminBro routes
