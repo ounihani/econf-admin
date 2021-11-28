@@ -165,10 +165,10 @@ const router = AdminBroExpressjs.buildAuthenticatedRouter(adminBro, {
 })
 
 app.use(adminBro.options.rootPath, router)
-
+let PORT = process.env.PORT || 8080 ;
 // Running the server
 const run = async () => {
-  await app.listen(8080, () => console.log(`Example app listening on port 8080!`))
+  await app.listen(PORT, () => console.log('Example app listening on port '+ PORT))
 }
 
 run()
