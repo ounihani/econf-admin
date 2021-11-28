@@ -44,6 +44,7 @@ const locale = {
 
 // Pass all configuration settings to AdminBro
 const adminBro = new AdminBro({
+
   resources: [
     {
       resource: User,
